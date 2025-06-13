@@ -1,0 +1,34 @@
+### Services à intégrer
+
+1. **Base de données**
+
+   - Image : `mysql:8.0`
+   - Nom de base à créer : `employee`
+   - Volume de persistance à ajouter
+
+2. **PhpMyAdmin**
+
+   - Image : `phpmyadmin:latest`
+   - Interface accessible via navigateur
+
+3. **Backend (Spring Boot)**
+
+   - Construit depuis le dossier `./back_employee`
+   - Communique avec MySQL
+   - Variables d'environment :
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/employee
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+
+4. **Frontend (React)**
+
+   - Construit depuis le dossier `./front_employee`
+   - Communique avec le backend
+
+
+exo7/
+├── back_employee/
+│   └── (Your Spring Boot project files)
+├── front_employee/
+│   └── (Your React project files)
+└── docker-compose.yml

@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # 1. Database service
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: PASSWORD
+      MYSQL_DATABASE: employee
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - app-network
+  
+  # 2. PhpMyAdmin service
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin_interface
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: mysql_db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: PASSWORD
+    ports:
+      - "8081:80"
+    networks:
+      - app-network
+
+  # 3. Backend service
+  backend:
+    build:
+      context: ./back_employee
+      dockerfile: Dockerfile
+    container_name: spring_backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql_db:3306/employee
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: PASSWORD
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  # 4. Frontend service
+  frontend:
+    build:
+      context: ./front_employee
+      dockerfile: Dockerfile
+    container_name: react_frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+# Volumes
+volumes:
+  db_data:
+
+# Networks
+networks:
+  app-network:
+    driver: bridge
